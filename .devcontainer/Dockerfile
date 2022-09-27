@@ -13,4 +13,4 @@ WORKDIR /home/vscode
 
 USER root
 # Project specific stuff
-RUN apt-get install -y swig libboost-all-dev build-essential cmake
+RUN apt-get install -y libboost-all-dev build-essential cmake doxygen python3 python3-pip
