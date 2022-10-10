@@ -13,4 +13,9 @@ WORKDIR /home/vscode
 
 USER root
 # Project specific stuff
-RUN apt-get install -y libboost-all-dev build-essential cmake doxygen python3 python3-pip
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y build-essential libboost-all-dev swig doxygen git cmake python3 python3-pip ruby-dev lcov
+RUN gem install coveralls-lcov
+USER vscode
+RUN python3 -m pip install --upgrade pip
+RUN pip3 install --user -U pip-tools

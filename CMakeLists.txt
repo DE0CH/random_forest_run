@@ -41,6 +41,48 @@ if(DOXYGEN_FOUND)
 		COMMENT "Generating API documentation with Doxygen" VERBATIM)
 endif(DOXYGEN_FOUND)
 
+
+
+if(PYTHONINTERP_FOUND AND SWIG_FOUND)
+	file(COPY ${PROJECT_SOURCE_DIR}/pyrfr DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+	file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/pyrfr ${CMAKE_CURRENT_BINARY_DIR}/python_package)
+
+	configure_file(${PROJECT_SOURCE_DIR}/pyrfr/setup.py ${CMAKE_CURRENT_BINARY_DIR}/python_package/setup.py)
+	configure_file(${PROJECT_SOURCE_DIR}/pyrfr/pyrfr/__init__.py ${CMAKE_CURRENT_BINARY_DIR}/python_package/pyrfr/__init__.py)
+
+	file(COPY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/python_package)
+	file(COPY ${PROJECT_SOURCE_DIR}/LICENSE.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/python_package)
+	file(COPY ${PROJECT_SOURCE_DIR}/LICENSE_cereal-1.2.2 DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/python_package)
+	file(COPY ${PROJECT_SOURCE_DIR}/LICENSE_doxy2swig DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/python_package)
+	file(COPY ${PROJECT_SOURCE_DIR}/LICENSE_rapidjson DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/python_package)
+	file(COPY ${PROJECT_SOURCE_DIR}/LICENSE_rapidxml DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/python_package)
+
+
+	add_custom_target(pyrfr_docstrings
+		COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/lib/doxy2swig/doxy2swig.py -a -t -f -q -c ${CMAKE_CURRENT_BINARY_DIR}/doc/xml/index.xml ${CMAKE_CURRENT_BINARY_DIR}/python_package/pyrfr/docstrings.i
+		DEPENDS doxygen_doc
+		COMMENT "Generating Python Docstrings" VERBATIM
+	)
+
+	#file(COPY documentation DESTINATION ${CMAKE_BINARY_DIR})
+	#file(RENAME ${CMAKE_BINARY_DIR}/documentation ${CMAKE_BINARY_DIR}/github_docs)
+	#file(COPY include DESTINATION ${CMAKE_BINARY_DIR})
+	#configure_file(${PROJECT_SOURCE_DIR}/documentation/conf.py ${CMAKE_CURRENT_BINARY_DIR}/github_docs/conf.py)
+	#add_custom_target(github_documentation
+	#	COMMAND  make html
+	#	DEPENDS pyrfr_build
+	#	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/github_docs
+	#	COMMENT "Generating github pages"
+	#)
+
+	add_custom_target(pyrfr_build ALL
+		COMMAND ${PYTHON_EXECUTABLE} setup.py build_ext --inplace --swig ${SWIG_EXECUTABLE}
+		DEPENDS pyrfr_docstrings
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python_package
+	)
+endif(PYTHONINTERP_FOUND AND SWIG_FOUND)
+
+
 # add all the unit tests in the tests directory
 add_subdirectory(tests)
 
