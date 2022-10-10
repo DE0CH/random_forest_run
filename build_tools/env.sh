@@ -6,7 +6,7 @@ set -x
 # order is important so boost is properly recognized by cmake
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y build-essential libboost-all-dev swig doxygen git cmake
+sudo apt install -y build-essential libboost-all-dev swig doxygen git cmake python3 python3-pip3
 sudo apt-get install -y swig
 
 # ctest related requirements

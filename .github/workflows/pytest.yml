@@ -21,12 +21,13 @@ on:
 jobs:
   ubuntu:
 
-    runs-on: ubuntu-latest
     strategy:
       matrix:
+        os: [ubuntu-latest, ubuntu-22.04]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
         swig: ['3.0', '4.0']
       fail-fast:  false
+    runs-on: ${{ matrix }}
 
     steps:
     - uses: actions/checkout@v3
